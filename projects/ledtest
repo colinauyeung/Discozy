@@ -1,0 +1,31 @@
+
+
+var wifi = require("Wifi");
+wifi.setHostname("Espruino");
+wifi.stopAP();
+wifi.connect("Tanikaze", {password:"yuukochan"}, function(err){
+  console.log("connected? err=", err, "info=", wifi.getIP());
+
+
+  // Make this persistent across power cycles.
+  wifi.save();
+});
+
+// Produce an animated rainbow over 25 LEDs
+var grb = new Uint8ClampedArray(16*3);
+var pos = 0;
+function getPattern() {
+  pos++;
+  for (var i=0;i<grb.length;) {
+    
+    grb[i++] = (1 + Math.sin((i+pos)*0.1324)) * 25;
+    grb[i++] = (1 + Math.sin((i+pos)*0.1654)) * 25;
+    grb[i++] = (1 + Math.sin((i+pos)*0.1)) * 25;
+  }
+  return grb;
+}
+setInterval(function() {
+  require("neopixel").write(D2, getPattern());
+}, 100);
+
+console.log(D1.getInfo());
